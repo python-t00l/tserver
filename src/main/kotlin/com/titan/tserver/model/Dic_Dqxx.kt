@@ -1,4 +1,4 @@
-package com.titan.server.model
+package com.titan.tserver.model
 
 import javax.persistence.Entity
 import javax.persistence.Id

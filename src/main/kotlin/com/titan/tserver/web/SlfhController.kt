@@ -1,8 +1,6 @@
 package com.titan.tserver.web
 
-import com.titan.server.model.Greeting
-import com.titan.server.model.ResultData
-import com.titan.server.model.User
+import com.titan.tserver.model.ResultData
 import com.titan.tserver.service.SlfhService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -13,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong
 @RequestMapping(value = "gyslfh/api")
 class SlfhController {
 
-    val counter = AtomicLong()
+    //val counter = AtomicLong()
 
 
     @Autowired
@@ -25,24 +23,20 @@ class SlfhController {
     }
 
 
-    @GetMapping("/greeting")
-    fun greeting(@RequestParam(value = "name", defaultValue = "World") name: String) =
-            Greeting(counter.incrementAndGet(), "Hello, $name")
-
-
-
-
-
     @GetMapping("/login")
     fun login(@RequestParam username: String,@RequestParam password:String,@RequestParam clientid:String): ResultData {
         try {
             //whs:ZO4b7R2S4SK9yH4JmdDd+w==
             //val newpsd=EncryptUtil.EncoderByMd5("whs")
             val loginData=slfhService!!.login(username,password,clientid)
+            if(loginData!=null){
+                return ResultData(true, loginData, "登陆成功")
 
-            return ResultData(true, loginData, "登陆成功")
+            }else{
+                return ResultData(false, null, "登陆失败:用户名或密码错误")
+            }
         }catch (e: Exception){
-           return ResultData(false, null, "登陆异常")
+            return ResultData(false, null, "登陆异常")
         }
     }
 

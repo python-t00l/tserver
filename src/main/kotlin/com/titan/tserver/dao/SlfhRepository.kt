@@ -1,6 +1,6 @@
 package com.titan.tserver.dao
 
-import com.titan.server.model.LoginResult
+import com.titan.tserver.model.LoginResult
 import org.springframework.stereotype.Repository
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
