@@ -36,8 +36,18 @@ class SlfhController {
                 return ResultData(false, null, "登陆失败:用户名或密码错误")
             }
         }catch (e: Exception){
-            return ResultData(false, null, "登陆异常")
+            return ResultData(false, null, "登陆异常"+e)
         }
     }
+
+    //@GetMapping("/getAlarmInfo")
+    /*fun getAlarmInfo(@RequestParam dqid:Int): ResultData{
+        try {
+           // val alarminfos=slfhService!!.getAlarmInfos()
+            return ResultData(true,alarminfos,"获取成功")
+        }catch (e:Exception){
+            return ResultData(false,null,"获取信息异常"+e)
+        }
+    }*/
 
 }
