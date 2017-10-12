@@ -33,7 +33,8 @@ class SclyController{
         try {
             //whs:ZO4b7R2S4SK9yH4JmdDd+w==
             //val newpsd=EncryptUtil.EncoderByMd5("whs")
-            val result=service!!.uploadinfo("")
+//            val result=service!!.uploadinfo("")
+            val result=service!!.uploadinfo(uploadinfo)
             System.out.print("uploadinfo:"+uploadinfo.toString())
             if(result){
                 return ResultData(true, result, "上报成功"+uploadinfo.toString())

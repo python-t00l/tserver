@@ -20,7 +20,7 @@ public class FileUtil {
      */
 
     public static String encodeBase64File(String path) throws Exception {
-        File file = new File(path);;
+        File file = new File(path);
         FileInputStream inputFile = new FileInputStream(file);
         byte[] buffer = new byte[(int) file.length()];
         inputFile.read(buffer);

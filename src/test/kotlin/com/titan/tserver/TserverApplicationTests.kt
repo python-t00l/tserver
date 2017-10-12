@@ -19,9 +19,9 @@ class TserverApplicationTests {
 	fun encodeBase64File(){
 		try {
 
-			val base64Code = FileUtil.encodeBase64File("/Users/whs/Downloads/images/图层渲染.png")
+			val base64Code = FileUtil.encodeBase64File("E:/react-native资料/1.jpg")
 			println(base64Code)
-			FileUtil.decoderBase64File(base64Code, "/Users/whs/Downloads/images/图层渲染_1.png")
+			FileUtil.decoderBase64File(base64Code, "E:/react-native资料/1_1.jpg")
 			//FileUtil.toFile(base64Code, "D:\\three.txt")
 		} catch (e: Exception) {
 			//e.printStackTrace()
