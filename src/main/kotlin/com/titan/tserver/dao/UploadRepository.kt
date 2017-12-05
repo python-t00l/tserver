@@ -3,6 +3,9 @@ package com.titan.tserver.dao
 import com.titan.tserver.model.Busi_uploadinfo
 import org.springframework.data.repository.CrudRepository
 
+/**
+ * 信息上报接口
+ */
 interface UploadRepository : CrudRepository<Busi_uploadinfo, Long> {
 
     /**

@@ -23,9 +23,9 @@ class UploadInfo {
     //联系方式
     var phone: String? = null
     //事件类型
-    var eventtype:Int? = null
+    var eventtype:String? = null
     //子事件
-    var eventsubtype:Int? = null
+    var eventsubtype:String? = null
     //经度
     var lon: Double? = null
     //纬度
@@ -37,10 +37,10 @@ class UploadInfo {
     //备注
     var remark: String? = null
     //照片
-    var picArray: String? = null
+    var picArray: Array<String>? = null
 
     override fun toString(): String {
-        return "UploadInfo(id=$id, username=$username, phone=$phone, eventtype=$eventtype, eventsubtype=$eventsubtype, lon=$lon, lat=$lat, info=$info, address=$address, remark=$remark, picArray=$picArray)"
+        return "UploadInfo(id=$id, username=$username, phone=$phone, eventtype=$eventtype, eventsubtype=$eventsubtype, lon=$lon, lat=$lat, info=$info, address=$address, remark=$remark)"
     }
 
 }
