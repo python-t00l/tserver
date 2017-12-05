@@ -1,15 +1,12 @@
 package com.titan.tserver.web
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.titan.tserver.model.ResultData
 import com.titan.tserver.model.UploadInfo
-import com.titan.tserver.service.SclyServiceImpl
-import com.titan.tserver.util.FileUtil
+import com.titan.tserver.service.SclyService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import sun.rmi.runtime.Log
-import java.text.SimpleDateFormat
+import org.springframework.web.bind.annotation.RequestMapping
+import javax.servlet.http.HttpServletRequest
 
 
 /**
@@ -23,7 +20,7 @@ class SclyController {
 
 
     @Autowired
-    private val service: SclyServiceImpl? = null
+    private val service: SclyService? = null
 
     @RequestMapping("/")
     fun home(): String {
@@ -35,16 +32,18 @@ class SclyController {
      * @param uploadinfo 上报信息
      */
     @PostMapping("/uploadinfo")
-    fun uploadinfo(@RequestBody uploadinfo: UploadInfo): ResultData {
+    fun uploadinfo(@RequestBody uploadinfo: UploadInfo,request: HttpServletRequest): ResultData {
         try {
             //whs:ZO4b7R2S4SK9yH4JmdDd+w==
             //val newpsd=EncryptUtil.EncoderByMd5("whs")
+            val UploadPath: String=request.contextPath+"UploadFiles/"
             //文字信息上报
-            val result = service!!.uploadinfo(uploadinfo)
+            val result = service!!.uploadinfo(uploadinfo,UploadPath)
             //图片上报
-            val pic_result = service!!.savePic(uploadinfo.picArray)
+            //val  request: HttpServletRequest =request
+            //val pic_result = service.savePic(uploadinfo.picArray,UploadPath)
             System.out.print("uploadinfo:" + uploadinfo.toString())
-            if (result&& pic_result ) {//
+            if (result ) {//
                 return ResultData(true, result, "上报成功")
             } else if (!result) {
                 return ResultData(false, result, "信息上报失败")
@@ -55,6 +54,7 @@ class SclyController {
             return ResultData(false, null, "上报异常" + e)
         }
     }
+
 
 
 }

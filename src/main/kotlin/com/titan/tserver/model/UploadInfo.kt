@@ -2,18 +2,6 @@ package com.titan.tserver.model
 
 /**
  * 信息上报
- *
-{
-"username": "",
-"phone": "",
-"eventType": "",
-"eventSubType": "",
-"longitude": 117.22856,
-"latitude": 31.79534,
-"info": "",
-"marke": "",
-"picArray": ["",""],
-}
  */
 class UploadInfo {
     //主键
