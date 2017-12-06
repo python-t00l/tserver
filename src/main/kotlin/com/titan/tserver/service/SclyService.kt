@@ -15,7 +15,7 @@ interface SclyService {
      * 图片存储
      * @param picArray 图片数组
      */
-    fun savePic(picArray:Array<String>?,uplaodPath:String,uploadId:String,userName:String):Boolean
+    fun savePic(picArray:Array<String>?,uploadPath:String,uploadid:String,username:String):Boolean
 
     /**
      * 图片信息插入数据库

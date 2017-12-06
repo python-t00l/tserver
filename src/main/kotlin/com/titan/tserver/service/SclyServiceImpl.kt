@@ -38,7 +38,7 @@ class SclyServiceImpl : SclyService{
         try {
             val busi_uploadinfo: Busi_uploadinfo?= Busi_uploadinfo()
             busi_uploadinfo!!.address=uploadinfo.address
-            busi_uploadinfo.eventsubtype=uploadinfo.eventsubtype
+            //busi_uploadinfo.eventsubtype=uploadinfo.eventsubtype
             busi_uploadinfo.eventtype=uploadinfo.eventtype
             //busi_uploadinfo.id=uploadinfo.id
             busi_uploadinfo.info=uploadinfo.info
