@@ -38,4 +38,6 @@ class Busi_uploadinfo {
     var remark2: String? = null
     //地址
     var address: String? = null
+    //时间
+    var upinfotime: java.sql.Timestamp? = null
 }

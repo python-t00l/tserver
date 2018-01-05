@@ -1,6 +1,7 @@
 package com.titan.tserver.service
 
 import com.titan.tserver.dao.AttachmentRepository
+import com.titan.tserver.dao.HistoryInfoRepository
 import com.titan.tserver.dao.UploadRepository
 import com.titan.tserver.model.Busi_attachment
 import com.titan.tserver.model.Busi_uploadinfo
@@ -17,13 +18,16 @@ import java.util.*
  */
 
 @Service
-class SclyServiceImpl : SclyService{
+class SclyServiceImpl : SclyService {
     @Autowired
     //信息存储接口
     private val infoRepository: UploadRepository? = null
     @Autowired
     //图片存储接口
-    private val picRepository: AttachmentRepository?=null
+    private val picRepository: AttachmentRepository? = null
+
+    @Autowired
+    private val historyRepository: HistoryInfoRepository? = null
     //上报Id
     //var uploadinfoId:String?=null
     //用户名
@@ -36,22 +40,25 @@ class SclyServiceImpl : SclyService{
      */
     override fun uploadinfo(uploadinfo: UploadInfo, uploadPath: String): Boolean {
         try {
-            val busi_uploadinfo: Busi_uploadinfo?= Busi_uploadinfo()
-            busi_uploadinfo!!.address=uploadinfo.address
+            val busi_uploadinfo: Busi_uploadinfo? = Busi_uploadinfo()
+            busi_uploadinfo!!.address = uploadinfo.address
             //busi_uploadinfo.eventsubtype=uploadinfo.eventsubtype
-            busi_uploadinfo.eventtype=uploadinfo.eventtype
+            busi_uploadinfo.eventtype = uploadinfo.eventtype
             //busi_uploadinfo.id=uploadinfo.id
-            busi_uploadinfo.info=uploadinfo.info
-            busi_uploadinfo.lat=uploadinfo.lat.toString()
-            busi_uploadinfo.lon=uploadinfo.lon.toString()
-            busi_uploadinfo.phone=uploadinfo.phone
-            busi_uploadinfo.remark=uploadinfo.remark
-            busi_uploadinfo.username=uploadinfo.username
+            busi_uploadinfo.info = uploadinfo.info
+            busi_uploadinfo.lat = uploadinfo.lat.toString()
+            busi_uploadinfo.lon = uploadinfo.lon.toString()
+            busi_uploadinfo.phone = uploadinfo.phone
+            busi_uploadinfo.remark = uploadinfo.remark
+            busi_uploadinfo.username = uploadinfo.username
+            val dt = java.util.Date()
+            val date = java.sql.Timestamp(dt.time)
+            busi_uploadinfo.upinfotime = date
             infoRepository!!.save(busi_uploadinfo)
-            val uploadinfoId:String = busi_uploadinfo.id?.toString()!!
-            savePic(uploadinfo.picArray,uploadPath,uploadinfoId, uploadinfo.username!!)
+            val uploadinfoId: String = busi_uploadinfo.id?.toString()!!
+            savePic(uploadinfo.picArray, uploadPath, uploadinfoId, uploadinfo.username!!)
             return true
-        }catch (e:Exception){
+        } catch (e: Exception) {
             println("异常:$e")
             return false
         }
@@ -61,45 +68,65 @@ class SclyServiceImpl : SclyService{
      * 图片存储
      * @param picArray 图片数组
      */
-    override fun savePic(picArray: Array<String>?, uploadPath: String,uploadid:String,username:String):Boolean{
+    override fun savePic(picArray: Array<String>?, uploadPath: String, uploadid: String, username: String): Boolean {
         try {
             if (picArray == null) {
                 return true
             }
-            for (i in picArray.indices){
-                val dataFormat:SimpleDateFormat?=SimpleDateFormat("yyyyMMdd-HHmmssSSS")
-                val date:Date?=Date()
-                val time=dataFormat!!.format(date)
+            for (i in picArray.indices) {
+                val dataFormat: SimpleDateFormat? = SimpleDateFormat("yyyyMMdd-HHmmssSSS")
+                val date: Date? = Date()
+                val time = dataFormat!!.format(date)
                 //如果文件目录不存在创建目录
-                val file:File=File(uploadPath)
-                if(!file.exists()){
+                val file: File = File(uploadPath)
+                if (!file.exists()) {
                     file.mkdirs()
                 }
                 //val ProjectPath:String =ClassUtils.getDefaultClassLoader().getResource("upload_images").path
-                FileUtil.decoderBase64File(picArray[i], "$uploadPath/$username+'-'+$time.jpg")
+                FileUtil.decoderBase64File(picArray[i], "$uploadPath/$username-$time.jpg")
                 /*val upPicInfo=createUpPicInfo(
                         "E:/pic_output/$time.jpg","$time.jpg","",1,uploadinfoId)*/
 
 
-                val busi_attachment:Busi_attachment?=Busi_attachment()
+                val busi_attachment: Busi_attachment? = Busi_attachment()
                 //文件路径
-                busi_attachment!!.path="$uploadPath/$username+'-'+$time.jpg"
+                busi_attachment!!.path = "$uploadPath$username-$time.jpg"
                 //文件名
-                busi_attachment.title="$username+'-'+$time.jpg"
+                busi_attachment.title = "$username-$time.jpg"
                 //备注
                 //busi_attachment.remark=upPicInfo.remark
                 //文件类型
-                busi_attachment.type=1
+                busi_attachment.type = 1
                 //事件ID
-                busi_attachment.uploadinfoid=uploadid
+                busi_attachment.uploadinfoid = uploadid
                 picRepository!!.save(busi_attachment)
                 //insertPicInfo(upPicInfo)
             }
             return true
-        }catch (e:Exception){
+        } catch (e: Exception) {
             println("error2:$e")
             return false
         }
+    }
+
+    /**
+     * 获取上报历史信息
+     */
+    override fun getHisInfo(): List<Busi_uploadinfo> {
+        val iterable = historyRepository!!.findAll()
+        val list = ArrayList<Busi_uploadinfo>()
+        val iterator = iterable.iterator()
+        while (iterator.hasNext()) {
+            list.add(iterator.next())
+        }
+        return list
+    }
+
+    /**
+     * 视频上传
+     */
+    override fun upVideo(): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     /**

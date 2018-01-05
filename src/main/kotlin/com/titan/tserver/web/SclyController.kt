@@ -6,6 +6,8 @@ import com.titan.tserver.service.SclyService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.multipart.MultipartFile
+import java.io.File
 import javax.servlet.http.HttpServletRequest
 
 
@@ -36,7 +38,7 @@ class SclyController {
         try {
             //whs:ZO4b7R2S4SK9yH4JmdDd+w==
             //val newpsd=EncryptUtil.EncoderByMd5("whs")
-            val UploadPath: String=request.contextPath+"UploadFiles/"
+            val UploadPath: String=request.contextPath+"UploadFiles/images"
             //文字信息上报
             val result = service!!.uploadinfo(uploadinfo,UploadPath)
             //图片上报
@@ -55,6 +57,29 @@ class SclyController {
         }
     }
 
+    @PostMapping("/gethistoryinfo")
+    fun gethistoryinfo():ResultData{
+        var result= service!!.getHisInfo()
+        return ResultData(true,result,"成功")
+    }
 
+    @PostMapping("/upVideo")
+    fun upVideo(@RequestParam("file") file:MultipartFile ){
+        // 判断文件是否为空
+        if (!file.isEmpty) {
+            try {
+                file.transferTo(File("F:\\image_source"))
+            } catch (e: Exception) {
+                println("异常video:$e")
+            }
+
+        }
+//        var result = service!!.upVideo()
+//        return if (result) {
+//            ResultData(true, result, "上报成功")
+//        } else{
+//            ResultData(false, result, "上报失败")
+//        }
+    }
 
 }

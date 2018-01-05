@@ -1,5 +1,6 @@
 package com.titan.tserver.service
 
+import com.titan.tserver.model.Busi_uploadinfo
 import com.titan.tserver.model.UploadInfo
 
 /**
@@ -17,6 +18,15 @@ interface SclyService {
      */
     fun savePic(picArray:Array<String>?,uploadPath:String,uploadid:String,username:String):Boolean
 
+    /**
+     * 获取历史上报信息
+     */
+    fun getHisInfo():List<Busi_uploadinfo>
+
+    /**
+     * 上传视频
+     */
+    fun upVideo():Boolean
     /**
      * 图片信息插入数据库
      * @param upPicInfo 图片上报信息
