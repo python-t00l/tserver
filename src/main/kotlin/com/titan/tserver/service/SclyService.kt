@@ -32,7 +32,6 @@ interface SclyService {
      * @param upPicInfo 图片上报信息
      */
     //fun insertPicInfo(upPicInfo: UpPicInfo):Boolean
-
     /**
      * 创建图片存储信息实例
      * @param path 存储地址

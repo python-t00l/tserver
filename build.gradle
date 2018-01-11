@@ -1,7 +1,7 @@
 buildscript {
 	ext {
 		kotlinVersion = '1.1.4'
-		springBootVersion = '1.5.6.RELEASE'
+		springBootVersion = '1.5.9.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -43,9 +43,14 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter')
+    //页面跳转
+	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+
+
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}")
 	compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+    //阿里数据库连接池
 	compile 'com.alibaba:druid-spring-boot-starter:1.1.2'
 	compile files('libs/ojdbc8.jar')
 }
