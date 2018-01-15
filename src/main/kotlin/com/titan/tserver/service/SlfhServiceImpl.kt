@@ -18,15 +18,15 @@ class SlfhServiceImpl: SlfhService {
 
     override fun login(username: String, password: String, clendid: String): LoginResult? {
         //return repository!!.login(username,password)
-        repository!!.saveClientid(clendid,username,password)
-        return repository!!.login(username,password)
+//        repository!!.saveClientid(clendid,username,password)
+//        return repository!!.login(username,password)
         //val dd=repository!!.saveClientid(clendid,username,password)
         /*if(repository!!.saveClientid(clendid,username,password)>0){
                 return repository.login(username,password)
         }else{
             return null
         }*/
-
+        return null
 
     }
 }

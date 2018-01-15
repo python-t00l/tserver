@@ -1,19 +1,22 @@
 package com.titan.tserver.web
 
+import com.google.gson.Gson
 import com.titan.tserver.model.ResultData
 import com.titan.tserver.model.UploadInfo
 import com.titan.tserver.service.SclyService
 import com.titan.tserver.storage.StorageService
-import com.titan.tserver.util.FileUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 import javax.servlet.http.HttpServletRequest
-import org.springframework.web.bind.annotation.RequestMethod
-
-
+import java.util.ArrayList
+import com.google.gson.reflect.TypeToken
+import cn.jpush.api.push.model.PushModel.gson
+import com.google.gson.JsonSyntaxException
+import org.springframework.util.StringUtils
+import java.net.URLDecoder
 
 
 /**
@@ -30,7 +33,7 @@ class SclyController {
     private val service: SclyService? = null
     //文件存储
     @Autowired
-    private val storageService: StorageService?=null
+    private val storageService: StorageService? = null
 
     @RequestMapping("/")
     fun home(): String {
@@ -41,65 +44,46 @@ class SclyController {
      * 信息上报
      * @param uploadinfo 上报信息
      */
-    @PostMapping("/uploadinfo")
-    fun uploadinfo(@RequestBody uploadinfo: UploadInfo,request: HttpServletRequest): ResultData {
+//    @PostMapping("/uploadinfo")
+//    fun uploadinfo(@RequestBody uploadinfo: UploadInfo, request: HttpServletRequest): ResultData {
+
+    fun uploadinfo(uploadinfo: UploadInfo, UploadPath: String): String {
         try {
             //whs:ZO4b7R2S4SK9yH4JmdDd+w==
             //val newpsd=EncryptUtil.EncoderByMd5("whs")
-            val UploadPath: String=request.contextPath+"UploadFiles/images"
+//            val UploadPath: String = request.contextPath + "UploadFiles/images"
             //文字信息上报
-            val result = service!!.uploadinfo(uploadinfo,UploadPath)
+            val result = service!!.uploadinfo(uploadinfo, UploadPath)
             //图片上报
             //val  request: HttpServletRequest =request
             //val pic_result = service.savePic(uploadinfo.picArray,UploadPath)
             System.out.print("uploadinfo:" + uploadinfo.toString())
-            if (result ) {//
-                return ResultData(true, result, "上报成功")
-            } else if (!result) {
-                return ResultData(false, result, "信息上报失败")
+            if (result == 1) {//
+//                service!!.pushInfo(uploadinfo)
+                return "上报成功"
+            } else if (result == 3) {
+                return "信息上报失败"
             } else {
-                return ResultData(false, result, "图片上报失败")
+                return "图片上报失败"
             }
         } catch (e: Exception) {
-            return ResultData(false, null, "上报异常" + e)
+            return "上报异常" + e
         }
     }
 
-    @PostMapping("/gethistoryinfo")
-    fun gethistoryinfo():ResultData{
-        var result= service!!.getHisInfo()
-        return ResultData(true,result,"成功")
-    }
-
-    //跳转到上传文件的页面
-    @GetMapping("/gouploadimg")
-    fun goUploadImg(): String {
-        //跳转到 templates 目录下的 uploadimg.html
-        return "/upload"
-    }
-
-    @RequestMapping("/upVideo")
-    fun upVideo(@RequestParam("file") file:MultipartFile){
-        // 判断文件是否为空
-        if (!file.isEmpty) {
-            try {
-                file.transferTo(File("F:\\image_source"))
-            } catch (e: Exception) {
-                println("异常video:$e")
-            }
-
-        }
+    @RequestMapping("/gethistoryinfo")
+    fun gethistoryinfo(@RequestParam("pageIndex", defaultValue = "0") index: Int
+                       , @RequestParam("pageSize", defaultValue = "10") size: Int): ResultData {
+        val result = service!!.getHisInfo(index, size)
+        return ResultData(true, result, "成功")
     }
 
     /**
      * 文件上传
      */
     @PostMapping("/uploadfile")
-    fun uploadFile(@RequestParam("file") file: MultipartFile, request: HttpServletRequest): ResultData {
+    fun uploadFile(@RequestParam("file") file: MultipartFile): ResultData {
 
-        val UploadPath = request.contextPath + "UploadFiles/images"
-        val contentType = file.contentType
-        val fileName = file.originalFilename
         try {
             storageService!!.store(file)
             //FileUtil.uploadFile(file.bytes, UploadPath, fileName)
@@ -112,23 +96,56 @@ class SclyController {
         return ResultData(true, "文件上传", "上报成功")
     }
 
+    //@RequestParam("file") files: Array<MultipartFile>,
+    //json: UploadInfo,
     /**
      * 多个文件上传
      */
     @PostMapping("/uploadfiles")
-    fun uploadFiles(@RequestParam("file") files: Array<MultipartFile>) : ResultData {
-        for(file in files){
-            try {
+    fun uploadFiles(@RequestParam("file") files: Array<MultipartFile>,
+                    request: HttpServletRequest): ResultData {
+
+        val json = request.getParameter("json")
+
+        val gson = Gson()
+        val type = object : TypeToken<UploadInfo>() {}.type
+        val info = gson.fromJson<UploadInfo>(json, type)
+        val UploadPath: String = request.contextPath + "UploadFiles\\images"
+        try {
+            val result = uploadinfo(info, UploadPath)
+            for (file in files) {
                 storageService!!.store(file)
-            } catch (e: Exception) {
-                // TODO: handle exception
-                System.out.println("上传异常" + e)
-                return ResultData(false, "文件上传", "上传异常" + e)
-
+                val filename = URLDecoder.decode(StringUtils.cleanPath(file.originalFilename),"utf-8")
+                val path = storageService!!.load(filename)
+                service!!.saveVideo(path.toString(), filename)
             }
-        }
-        return ResultData(true, "文件上传", "上报成功")
+            return when (result) {
+                "上报成功" -> {
+                    service!!.pushInfo(info)
+                    ResultData(true, result, result)
+                }
+                "信息上报失败" -> ResultData(false, result, result)
+                "图片上报失败" -> ResultData(false, result, result)
+                else -> ResultData(false, result, result)
+            }
+        } catch (e: Exception) {
+            // TODO: handle exception
+            System.out.println("上传异常" + e)
+            return ResultData(false, "文件上传", "上传异常" + e)
 
+        }
+    }
+
+    @RequestMapping("/login")
+    fun login(@RequestParam("name") name: String,
+              @RequestParam("password") psw: String): ResultData {
+        val result = service!!.login(name, psw)
+        return when (result) {
+            "LOGIN_ERR" -> ResultData(false, result, "登录异常，请稍后再试")
+            "PSW_ERR" -> ResultData(false, result, "密码错误")
+            "USERNAME_ERR" -> ResultData(false, result, "用户名错误")
+            else -> ResultData(true, result, "登录成功")
+        }
     }
 
 }

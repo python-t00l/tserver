@@ -16,7 +16,7 @@ class Busi_attachment {
     var uploadinfoid: String? = null
     //存储地址
     var path: String? = null
-    //文件类型 1:图片 2:视频 3:语音
+    //文件类型 1-图片，2-声音，3-视频
     var type: Int? = null
     //文件名
     var title: String? = null

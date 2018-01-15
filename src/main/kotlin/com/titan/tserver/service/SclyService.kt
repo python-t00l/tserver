@@ -1,16 +1,17 @@
 package com.titan.tserver.service
 
+import cn.jpush.api.push.model.PushPayload
 import com.titan.tserver.model.Busi_uploadinfo
 import com.titan.tserver.model.UploadInfo
 
 /**
- * 森林防火服务
+ * 四川林业服务
  */
 interface SclyService {
     /**
      *
      */
-    fun uploadinfo(uploadinfo: UploadInfo, uploadPath: String): Boolean
+    fun uploadinfo(uploadinfo: UploadInfo, uploadPath: String): Int
 
     /**
      * 图片存储
@@ -21,12 +22,19 @@ interface SclyService {
     /**
      * 获取历史上报信息
      */
-    fun getHisInfo():List<Busi_uploadinfo>
+    fun getHisInfo(index:Int,size:Int):List<Busi_uploadinfo>
 
     /**
-     * 上传视频
+     * 视频存储
      */
-    fun upVideo():Boolean
+    fun saveVideo(path:String, name: String):Boolean
+
+    /**
+     * 信息推送
+     */
+    fun pushInfo(uploadinfo: UploadInfo)
+
+    fun login(name:String,psw:String):String
     /**
      * 图片信息插入数据库
      * @param upPicInfo 图片上报信息
