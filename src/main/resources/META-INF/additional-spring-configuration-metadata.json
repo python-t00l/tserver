@@ -4,10 +4,5 @@
       "name": "upload.dir.imgs",
       "type": "java.lang.String",
       "description": "Description for upload.dir.imgs."
-    },
-    {
-      "name": "spring.view.prefix",
-      "type": "java.lang.String",
-      "description": "Description for spring.view.prefix."
     }
   ] }

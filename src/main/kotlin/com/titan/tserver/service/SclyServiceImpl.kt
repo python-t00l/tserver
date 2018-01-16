@@ -53,8 +53,8 @@ class SclyServiceImpl : SclyService {
     private val dqxxRepository: DqxxRepository? = null
 
     //行政区划对应人员查询接口
-    @Autowired
-    private val peopleRepository: PeopleRepository? = null
+    /*@Autowired
+    private val peopleRepository: PeopleRepository? = null*/
 
     //行政区划id查询接口
     @Autowired
@@ -263,13 +263,6 @@ class SclyServiceImpl : SclyService {
             map.put("upinfotime", java.util.Date().time.toString())
             val title = eventType[Integer.parseInt(uploadinfo.eventtype) - 1]
             val content = uploadinfo.address
-//        val people = queryPeople(queryDqcode(uploadinfo.district))
-//        if (people == "") {
-//            println("没有查询到推送对象")
-////            return
-//        }
-//        val alias = people!!.split(",")
-
             val payload = PushPayload.newBuilder()
                     .setPlatform(Platform.all())
                     .setAudience(Audience.tag(queryDqcode(uploadinfo.district)))
@@ -292,7 +285,7 @@ class SclyServiceImpl : SclyService {
         return dic.djh
     }
 
-    fun queryPeople(areaCode: String): String? {
+    /*fun queryPeople(areaCode: String): String? {
         if (areaCode == "") {
             return ""
         }
@@ -301,7 +294,7 @@ class SclyServiceImpl : SclyService {
             return ""
         }
         return peopleInfo.infopeople
-    }
+    }*/
 
     fun queryDqcode2(unitid: String): String {
         val unitInfo = dqxxidRepository!!.findByUnitid(unitid) ?: return ""
