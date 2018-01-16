@@ -1,25 +1,26 @@
 package com.titan.tserver.web
 
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.titan.tserver.dao.DqxxRepository
 import com.titan.tserver.model.ResultData
 import com.titan.tserver.model.UploadInfo
 import com.titan.tserver.service.SclyService
+import com.titan.tserver.storage.StorageService
+import com.titan.tserver.util.PushUtil
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.*
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.multipart.MultipartFile
-import javax.servlet.http.HttpServletRequest
-import com.google.gson.reflect.TypeToken
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.util.StringUtils
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.net.URLDecoder
+import javax.servlet.http.HttpServletRequest
 
 
 /**
  * 四川林业公众平台服务
  */
 @RestController//默认以json返回数据
-@EnableAutoConfiguration
 @RequestMapping(value = "scly/api")
 class SclyController {
 
@@ -32,7 +33,11 @@ class SclyController {
     @Autowired
     private val storageService: StorageService? = null
 
-    @RequestMapping("/")
+    //行政区划id查询接口
+    @Autowired
+    private val dqxxRepository: DqxxRepository? = null
+
+    @GetMapping("/")
     fun home(): String {
         return "Hello World!"
     }
@@ -83,7 +88,7 @@ class SclyController {
 
         try {
             storageService!!.store(file)
-            FileUtil.uploadFile(file.bytes, UploadPath, fileName)
+            //FileUtil.uploadFile(file.bytes, UploadPath, fileName)
         } catch (e: Exception) {
             // TODO: handle exception
             println("上传异常" + e)
@@ -112,13 +117,15 @@ class SclyController {
             val result = uploadinfo(info, UploadPath)
             for (file in files) {
                 storageService!!.store(file)
-                val filename = URLDecoder.decode(StringUtils.cleanPath(file.originalFilename),"utf-8")
+                val filename = URLDecoder.decode(StringUtils.cleanPath(file.originalFilename), "utf-8")
                 val path = storageService!!.load(filename)
                 service!!.saveVideo(path.toString(), filename)
             }
             return when (result) {
                 "上报成功" -> {
-                    service!!.pushInfo(info)
+//                    service!!.pushInfo(info)
+                    val dic = dqxxRepository!!.findByName(info.district)
+                    PushUtil().pushInfo(info, dic.djh)
                     ResultData(true, result, result)
                 }
                 "信息上报失败" -> ResultData(false, result, result)
@@ -126,7 +133,6 @@ class SclyController {
                 else -> ResultData(false, result, result)
             }
         } catch (e: Exception) {
-            // TODO: handle exception
             System.out.println("上传异常" + e)
             return ResultData(false, "文件上传", "上传异常" + e)
 

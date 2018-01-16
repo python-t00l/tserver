@@ -1,13 +1,8 @@
 package com.titan.tserver.dao
 
+
 import com.titan.tserver.model.Busi_User
-
-
-import com.titan.tserver.model.LoginResult
-import org.springframework.data.jpa.repository.Modifying
-import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.Repository
-import org.springframework.transaction.annotation.Transactional
 
 
 interface TDao:Repository<Busi_User,Long> {

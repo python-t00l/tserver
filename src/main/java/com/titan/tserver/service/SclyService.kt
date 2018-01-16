@@ -1,6 +1,5 @@
 package com.titan.tserver.service
 
-import cn.jpush.api.push.model.PushPayload
 import com.titan.tserver.model.Busi_uploadinfo
 import com.titan.tserver.model.UploadInfo
 
@@ -32,7 +31,7 @@ interface SclyService {
     /**
      * 信息推送
      */
-    fun pushInfo(uploadinfo: UploadInfo)
+//    fun pushInfo(uploadinfo: UploadInfo)
 
     fun login(name:String,psw:String):String
     /**

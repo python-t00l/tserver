@@ -10,9 +10,9 @@ import javax.sql.DataSource
  * 数据源配置
  */
 @Configuration
-class DataSourceConfigurer {
+open class DataSourceConfigurer {
     @Bean
-    fun dataSource(environment: Environment): DataSource {
+    open fun dataSource(environment: Environment): DataSource {
         return DruidDataSourceBuilder.create()
                 .build(environment, "spring.datasource.druid.")
     }

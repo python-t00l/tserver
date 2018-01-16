@@ -2,9 +2,13 @@ package com.titan.tserver.util
 
 import org.jetbrains.annotations.TestOnly
 import sun.misc.BASE64Encoder
-import java.security.MessageDigest
 import java.io.UnsupportedEncodingException
+import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import javax.crypto.Cipher
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.DESKeySpec
+import javax.crypto.spec.IvParameterSpec
 
 
 /**
@@ -68,4 +72,47 @@ class EncryptUtil {
     fun checkpassword(newpasswd: String, oldpasswd: String): Boolean {
         return EncoderByMd5(newpasswd) == oldpasswd
     }
+
+    /**
+     * 数据加密
+     */
+    fun encrypt(src: String): String {
+        val key = "AFA50D75"
+        try {
+            val srcEncode = java.net.URLEncoder.encode(src, "utf-8")
+            val cipher = Cipher.getInstance("DES/CBC/PKCS5Padding")
+
+            val desKeySpec = DESKeySpec(key.toByteArray(charset("UTF-8")))
+            val keyFactory = SecretKeyFactory.getInstance("DES")
+            val secretKey = keyFactory.generateSecret(desKeySpec)
+
+            val bytes = key.toByteArray(charset("UTF-8"))
+            val iv = IvParameterSpec(bytes)
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv)
+
+            val b = cipher.doFinal(srcEncode.toByteArray(charset("UTF-8")))
+            return toHexString(b)
+
+        } catch (e: Exception) {
+            print("加密异常：$e")
+            return ""
+        }
+
+    }
+
+    /**
+     * 转换16进制
+     */
+    fun toHexString(bytes: ByteArray): String {
+        val hexString = StringBuffer()
+        for (i in bytes.indices) {
+            val value = bytes[i].toInt() and 0xff
+            if (value < 16) {
+                hexString.append(0)
+            }
+            hexString.append(Integer.toHexString(value))
+        }
+        return hexString.toString().toUpperCase()
+    }
+
 }

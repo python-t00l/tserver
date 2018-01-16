@@ -11,7 +11,7 @@ interface DqxxRepository:CrudRepository<Dic_Dqxx,Long>{
 }
 
 interface UserInfoRepository :CrudRepository<BsUserbase,Long> {
-    fun findByusercode(code:String):BsUserbase
+    fun findByusercode(code:String):BsUserbase?
 }
 interface DqxxidRepository:CrudRepository<BsUnit,Long>{
     fun findByUnitid(unitid:String):BsUnit

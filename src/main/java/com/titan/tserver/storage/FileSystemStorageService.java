@@ -29,8 +29,9 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public void store(MultipartFile file) {
-        String filename = URLDecoder.decode(StringUtils.cleanPath(file.getOriginalFilename()));
+        String filename = file.getOriginalFilename();
         try {
+            filename = URLDecoder.decode(StringUtils.cleanPath(filename),"utf-8");
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file " + filename);
             }
