@@ -1,3 +1,4 @@
+/*
 package com.titan.tserver.web
 
 import com.titan.tserver.model.ResultData
@@ -41,13 +42,15 @@ class SlfhController {
     }
 
     //@GetMapping("/getAlarmInfo")
-    /*fun getAlarmInfo(@RequestParam dqid:Int): ResultData{
+    */
+/*fun getAlarmInfo(@RequestParam dqid:Int): ResultData{
         try {
            // val alarminfos=slfhService!!.getAlarmInfos()
             return ResultData(true,alarminfos,"获取成功")
         }catch (e:Exception){
             return ResultData(false,null,"获取信息异常"+e)
         }
-    }*/
+    }*//*
 
-}
+
+}*/

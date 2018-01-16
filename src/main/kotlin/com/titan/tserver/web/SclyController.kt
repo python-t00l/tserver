@@ -4,17 +4,13 @@ import com.google.gson.Gson
 import com.titan.tserver.model.ResultData
 import com.titan.tserver.model.UploadInfo
 import com.titan.tserver.service.SclyService
-import com.titan.tserver.storage.StorageService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.multipart.MultipartFile
-import java.io.File
 import javax.servlet.http.HttpServletRequest
-import java.util.ArrayList
 import com.google.gson.reflect.TypeToken
-import cn.jpush.api.push.model.PushModel.gson
-import com.google.gson.JsonSyntaxException
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.util.StringUtils
 import java.net.URLDecoder
 
@@ -23,6 +19,7 @@ import java.net.URLDecoder
  * 四川林业公众平台服务
  */
 @RestController//默认以json返回数据
+@EnableAutoConfiguration
 @RequestMapping(value = "scly/api")
 class SclyController {
 
@@ -86,7 +83,7 @@ class SclyController {
 
         try {
             storageService!!.store(file)
-            //FileUtil.uploadFile(file.bytes, UploadPath, fileName)
+            FileUtil.uploadFile(file.bytes, UploadPath, fileName)
         } catch (e: Exception) {
             // TODO: handle exception
             println("上传异常" + e)

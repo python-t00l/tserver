@@ -1,3 +1,4 @@
+/*
 package com.titan.tserver
 
 import com.titan.tserver.storage.StorageProperties
@@ -8,17 +9,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 
+//@EnableConfigurationProperties(StorageProperties::class)
 @SpringBootApplication
-@EnableConfigurationProperties(StorageProperties::class)
 class TserverApplication{
-
-    @Bean
+    */
+/*@Bean
     fun init(storageService: StorageService)= CommandLineRunner {
             //storageService.deleteAll()
             storageService.init()
-    }
+    }*//*
+
+
 }
+
 fun  main(args: Array<String>) {
     SpringApplication.run(TserverApplication::class.java, *args)
 }
 
+*/
