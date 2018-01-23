@@ -1,8 +1,0 @@
-{
-  "properties": [
-    {
-      "name": "upload.dir.imgs",
-      "type": "java.lang.String",
-      "description": "Description for upload.dir.imgs."
-    }
-  ] }

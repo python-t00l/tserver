@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -20,6 +18,8 @@ import java.util.*
 
 @Service
 class SclyServiceImpl : SclyService {
+
+
     private val PSW_ERR = "PSW_ERR"
     private val USERNAME_ERR = "USERNAME_ERR"
     private val LOGIN_ERR = "LOGIN_ERR"
@@ -54,7 +54,7 @@ class SclyServiceImpl : SclyService {
         return try {
             val user =  userInfoRepository!!.findByusercode(name)
             if (user != null) {
-                if (user.password.equals(EncryptUtil().encrypt(psw))) {
+                if (user.password!!.equals(EncryptUtil().encrypt(psw))) {
                     dqxxidRepository!!.findByUnitid(user.unitid).dqxxid
                 } else {
                     PSW_ERR
@@ -63,7 +63,7 @@ class SclyServiceImpl : SclyService {
                 USERNAME_ERR
             }
         } catch (e: Exception) {
-            print("登录异常:$e")
+            println("登录异常:$e")
             LOGIN_ERR
         }
     }
@@ -74,7 +74,7 @@ class SclyServiceImpl : SclyService {
      * @param uploadinfo 上报信息
      * @return 1:上报成功；2:图片上报失败；3:上报失败
      */
-    override fun uploadinfo(uploadinfo: UploadInfo, uploadPath: String): Int {
+    override fun uploadinfo(uploadinfo: UploadInfo): Boolean {
         try {
             val busi_uploadinfo: Busi_uploadinfo? = Busi_uploadinfo()
             busi_uploadinfo!!.address = uploadinfo.address
@@ -92,15 +92,11 @@ class SclyServiceImpl : SclyService {
             busi_uploadinfo.upinfotime = date
             infoRepository!!.save(busi_uploadinfo)
             uploadinfoId = busi_uploadinfo.id?.toString()!!
-            val result = savePic(uploadinfo.picArray, uploadPath, uploadinfoId, uploadinfo.username!!)
-            if (result) {
-                return 1
-            } else {
-                return 2
-            }
+            //val result = savePic(uploadinfo.picArray, uploadPath, uploadinfoId, uploadinfo.username!!)
+            return true
         } catch (e: Exception) {
             println("异常:$e")
-            return 3
+            return false
         }
     }
 
@@ -108,7 +104,7 @@ class SclyServiceImpl : SclyService {
      * 图片存储
      * @param picArray 图片数组
      */
-    override fun savePic(picArray: Array<String>?, uploadPath: String, uploadid: String, username: String): Boolean {
+    /*override fun savePic(picArray: Array<String>?, uploadPath: String, uploadid: String, username: String): Boolean {
         try {
             if (picArray == null) {
                 return true
@@ -122,15 +118,16 @@ class SclyServiceImpl : SclyService {
                 if (!file.exists()) {
                     file.mkdirs()
                 }
+                val filename:String =uploadPath+File.separator+"$username-$time.jpg"
                 //val ProjectPath:String =ClassUtils.getDefaultClassLoader().getResource("upload_images").path
-                FileUtil.decoderBase64File(picArray[i], "$uploadPath\\$username-$time.jpg")
-                /*val upPicInfo=createUpPicInfo(
-                        "E:/pic_output/$time.jpg","$time.jpg","",1,uploadinfoId)*/
+                FileUtil.decoderBase64File(picArray[i], filename)
+                *//*val upPicInfo=createUpPicInfo(
+                        "E:/pic_output/$time.jpg","$time.jpg","",1,uploadinfoId)*//*
 
 
                 val busi_attachment: Busi_attachment? = Busi_attachment()
                 //文件路径
-                busi_attachment!!.path = "$uploadPath\\$username-$time.jpg"
+                busi_attachment!!.path = filename
                 //文件名
                 busi_attachment.title = "$username-$time.jpg"
                 //备注
@@ -147,7 +144,7 @@ class SclyServiceImpl : SclyService {
             println("error2:$e")
             return false
         }
-    }
+    }*/
 
     /**
      * 获取上报历史信息
@@ -164,10 +161,30 @@ class SclyServiceImpl : SclyService {
         return list
     }
 
+    override fun saveFileInfo(path: String, type: Int):Boolean{
+        try {
+            val busi_attachment: Busi_attachment? = Busi_attachment()
+            //文件路径
+            busi_attachment!!.path = path
+            //文件名
+            busi_attachment.title = FileUtil.getFileName(path)
+            //备注
+            //busi_attachment.remark=upPicInfo.remark
+            //文件类型 1-图片，2-声音，3-视频
+            busi_attachment.type = type
+            //事件ID
+            busi_attachment.uploadinfoid = uploadinfoId
+            attachmentRepository!!.save(busi_attachment)
+            return true
+        } catch (e: Exception) {
+            println("文件入库异常：$e")
+            return false
+        }
+    }
     /**
      * 视频存储
      */
-    override fun saveVideo(path: String, name: String): Boolean {
+    /*override fun saveVideo(path: String, name: String): Boolean {
         try {
             val busi_attachment: Busi_attachment? = Busi_attachment()
             //文件路径
@@ -186,43 +203,7 @@ class SclyServiceImpl : SclyService {
             println("文件入库异常：$e")
             return false
         }
-    }
-
-    /**
-     * 图片信息插入数据库
-     * @param upPicInfo 图片上报信息
-     */
-    /*fun insertPicInfo(upPicInfo: UpPicInfo):Boolean{
-        try {
-            val busi_attachment:Busi_attachment?=Busi_attachment()
-            busi_attachment!!.path=upPicInfo.path
-            busi_attachment.title=upPicInfo.title
-            busi_attachment.remark=upPicInfo.remark
-            busi_attachment.type=upPicInfo.type
-            busi_attachment.uploadinfoid=upPicInfo.uploadinfoid
-            attachmentRepository!!.save(busi_attachment)
-            return true
-        }catch (e:Exception){
-            println("error3:$e")
-            return false
-        }
     }*/
 
-    /**
-     * 创建图片存储信息实例
-     * @param path 存储地址
-     * @param title 文件名
-     * @param remark 备注
-     * @param type 文件类型
-     * @param id 上报id
-     */
-    /*fun createUpPicInfo(path:String,title:String,remark:String,type:Int,id:String?):UpPicInfo{
-        val upPicInfo:UpPicInfo?= UpPicInfo()
-        upPicInfo!!.path=path
-        upPicInfo.title=title
-        upPicInfo.remark=remark
-        upPicInfo.type=type
-        upPicInfo.uploadinfoid=id
-        return upPicInfo
-    }*/
+
 }

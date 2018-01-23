@@ -25,7 +25,7 @@ class UploadInfo {
     //备注
     var remark: String = ""
     //照片
-    var picArray: Array<String>? = null
+    //var picArray: Array<String>? = null
     //地区名称
     lateinit var district:String
 

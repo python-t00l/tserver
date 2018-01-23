@@ -12,11 +12,13 @@ public interface StorageService {
 
     void store(MultipartFile file);
 
+    //void stoesVideo(MultipartFile file);
+
     Stream<Path> loadAll();
 
-    Path load(String filename);
+    Path load(String contentType, String filename);
 
-    Resource loadAsResource(String filename);
+    Resource loadAsResource(String contentType,String filename);
 
     void deleteAll();
 

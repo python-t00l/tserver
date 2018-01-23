@@ -9,9 +9,12 @@ import cn.jpush.api.push.model.notification.Notification
 import com.titan.tserver.model.UploadInfo
 import java.util.HashMap
 
+/**
+ * 极光推送
+ */
 class PushUtil {
 
-    val eventType = arrayOf("森林防火", "森林病虫害", "毁林", "盗伐")
+    private val eventType = arrayOf("森林防火", "森林病虫害", "毁林", "盗伐")
 
     fun pushInfo(uploadinfo: UploadInfo, tag: String) {
         try {
