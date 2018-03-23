@@ -42,7 +42,6 @@ class SclyController {
     private var storageService: StorageService? = null
 
 
-
     @GetMapping("/")
     fun home(): String {
         return "Hello World!"
@@ -78,13 +77,13 @@ class SclyController {
      * 多个文件上传
      */
     @PostMapping("/uploadfiles")
-   fun uploadFiles(@RequestParam("file") files: Array<MultipartFile>,
-                   request: HttpServletRequest): ResultData {
+    fun uploadFiles(@RequestParam("file") files: Array<MultipartFile>,
+                    request: HttpServletRequest): ResultData {
 
         val json = request.getParameter("json")
 
 
-        val UploadPath: String = request.getSession().servletContext.getRealPath(File.separator)+"UploadFiles"+ File.separator +"imgs"
+        val UploadPath: String = request.getSession().servletContext.getRealPath(File.separator) + "UploadFiles" + File.separator + "imgs"
 
         try {
             //val result = uploadinfo(info, UploadPath)
@@ -95,11 +94,11 @@ class SclyController {
             for (file in files) {
                 storageService!!.store(file)
                 val filename = URLDecoder.decode(StringUtils.cleanPath(file.originalFilename), "utf-8")
-                val path = storageService!!.load(file.contentType,filename)
+                val path = storageService!!.load(file.contentType, filename)
                 FileUtil.uploadFile(file.bytes, UploadPath, filename)
                 when (file.contentType) {
-                    "image/*" ->   sclyservice!!.saveFileInfo(path.toString(),1)
-                    "video/*" ->   sclyservice!!.saveFileInfo(path.toString(),3)
+                    "image/*" -> sclyservice!!.saveFileInfo(path.toString(), 1)
+                    "video/*" -> sclyservice!!.saveFileInfo(path.toString(), 3)
                 }
                 println("文件存储完成")
                 logger.info("文件存储完成")
@@ -108,17 +107,21 @@ class SclyController {
             return when (result) {
                 true -> {
                     val dic = dqxxRepository!!.findByName(info.district)
-                    PushUtil().pushInfo(info, dic.djh)
-                    logger.info("上报信息成功")
-                    ResultData(true, result, "上报信息成功")
+                    if (dic == null) {
+                        ResultData(true, result, "上报信息成功，但没有查询到所属区域")
+                    } else {
+                        PushUtil().pushInfo(info, dic.djh)
+                        logger.info("上报信息成功")
+                        ResultData(true, result, "上报信息成功")
+                    }
                 }
-                //"信息上报失败" -> ResultData(false, result, result)
-                //"图片上报失败" -> ResultData(false, result, result)
+            //"信息上报失败" -> ResultData(false, result, result)
+            //"图片上报失败" -> ResultData(false, result, result)
                 else -> ResultData(false, result, "上报信息失败")
             }
         } catch (e: Exception) {
             println("上传异常" + e)
-            logger.info("上报异常"+e)
+            logger.info("上报异常" + e)
             return ResultData(false, "文件上传", "上传异常" + e.message)
 
         }

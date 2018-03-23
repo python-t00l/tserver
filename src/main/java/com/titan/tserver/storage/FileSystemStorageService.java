@@ -7,7 +7,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class FileSystemStorageService implements StorageService {
     public void store(MultipartFile file) {
         String filename = file.getOriginalFilename();
         try {
-            filename = URLDecoder.decode(StringUtils.cleanPath(filename),"utf-8");
+            filename = URLDecoder.decode(filename,"utf-8");
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file " + filename);
             }
